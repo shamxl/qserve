@@ -4,7 +4,7 @@ use log::Logger;
 use response::Response;
 use std::{io::Write, net::TcpStream};
 
-pub fn home(mut stream: TcpStream, request: String) {
+pub fn home(mut stream: &TcpStream, request: String) {
     let path = request.split_whitespace().nth(1).unwrap();
 
     Logger::info(format!("requested path: {}", path).as_str());

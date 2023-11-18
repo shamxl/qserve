@@ -1,17 +1,13 @@
-extern crate term_size;
 mod operations;
-use operations::file;
 mod handlers;
 use crate::handlers::home::home;
-
+use crate::handlers::static_file::serve_static;
 mod log;
 mod response;
 use log::Logger;
+use std::net::TcpListener;
 
-use response::Response;
-use std::net::{SocketAddr, TcpListener};
-
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader};
 
 fn main() {
     // todo: implement a command line interface using `clap`
@@ -40,7 +36,12 @@ fn main() {
                 }
             };
 
-            home(stream, request)
+            let path = request.split_whitespace().nth(1).unwrap();
+			if path.starts_with("/qserve-static-files") {
+            	serve_static(&stream, request.clone());
+            } else {
+            	home(&stream, request.clone());
+            }
         });
     }
 }
