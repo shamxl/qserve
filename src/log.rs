@@ -1,35 +1,57 @@
 pub struct Logger;
+const POSTFIX: &str = "\x1B[0m";
+
+
+fn color (rgb: (i32, i32, i32)) -> String {
+	let (r,g,b) = rgb;
+
+	return format! ("\x1B[38;2;{0};{1};{2}m", r, g, b)
+}
+
+
 
 impl Logger {
-    pub fn info<T: AsRef<str>>(msg: T) {
-        let color_code = (0, 255, 0);
-        let log_message = color(color_code, " INFO ", msg.as_ref());
 
-        println!("{}", log_message);
-    }
+	pub fn info<T: AsRef<str>> (msg: T) {
+		let message = format! (
+			"{0}INFO{1} - {2}",
+			color((0, 255, 0)),
+			POSTFIX,
+			msg.as_ref()
+		);
 
-    pub fn warn<T: AsRef<str>>(msg: T) {
-        let color_code = (255, 244, 24);
-        let log_message = color(color_code, " WARN ", msg.as_ref());
+		println! ("{}", message);
+	}
 
-        println!("{}", log_message);
-    }
+	pub fn error<T: AsRef<str>> (msg: T) {
+		let message = format! (
+            "{0}ERROR{1} - {2}",
+            color((255, 0, 0)),
+            POSTFIX,
+            msg.as_ref()
+        );
 
-    pub fn error<T: AsRef<str>>(msg: T) {
-        let color_code = (255, 0, 0);
-        let log_message = color(color_code, " ERROR", msg.as_ref());
+		println! ("{}", message);		
+	}
 
-        eprintln!("{}", log_message);
-    }
+	pub fn warn<T: AsRef<str>> (msg: T) {
+		let message = format! (
+	    	"{0}WARN{1} - {2}",
+	    	color((255, 244, 4)),
+	        POSTFIX,
+	        msg.as_ref()
+	    );
+		println! ("{}", message);
+	}
+
+	pub fn get<T: AsRef<str>> (msg: T) {
+		let message = format! (
+            "{0}GET{1} - {0}{2}{1}",
+            color((70, 200, 30)),
+            POSTFIX,
+            msg.as_ref()
+        );
+        println! ("{}", message);
+	}
 }
 
-fn color(rgb: (i32, i32, i32), level: &str, msg: &str) -> String {
-    let (r, g, b) = rgb;
-    let prefix = format!("\x1B[38;2;{0};{1};{2}m", r, g, b);
-
-    let postfix = "\x1B[0m";
-
-    let colored = format!("{2}[ {0} ]{3} - {1}", level, msg, prefix, postfix);
-
-    colored
-}

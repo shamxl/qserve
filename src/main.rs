@@ -37,6 +37,7 @@ fn main() {
             };
 
             let path = request.split_whitespace().nth(1).unwrap();
+            Logger::get(path);
 			if path.starts_with("/qserve-static-files") {
             	serve_static(&stream, request.clone());
             } else {
