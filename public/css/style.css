@@ -1,0 +1,50 @@
+:root {
+	--background: #24293E;
+	--primary: #8EBBFF;
+	--secodary: #2F3651;
+}
+
+
+body {
+	background: var(--background);
+	color: white;
+	font-family: system-ui;
+}
+
+.files {
+	margin: 10px;
+}
+
+.file {
+	background: var(--secodary);
+	height: 50px;
+	margin: 10px;
+	border-radius: 5px;
+
+}
+
+.file > p {
+	padding: 15px 10px;
+}
+
+
+
+.icon > svg {
+	float: right;
+	padding: 15px 10px;
+	user-select: none;
+}
+
+.file > span:hover  {
+	width: 10px;
+	height: 10px;
+	box-shadow: 0 0 0 1px white;
+	border-radius: 5px;
+	
+}
+
+
+.type-dir {
+	color: var(--primary);
+}
+
