@@ -20,11 +20,18 @@ body {
 	height: 50px;
 	margin: 10px;
 	border-radius: 5px;
+	transition: 200ms ease;
 
 }
 
+.file:hover {
+	box-shadow: 0 0 0 0.5px #c4c4c4;
+}
+
+
 .file > p {
 	padding: 15px 10px;
+	user-select: none;
 }
 
 
