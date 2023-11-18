@@ -2,6 +2,7 @@ mod operations;
 mod handlers;
 use crate::handlers::home::home;
 use crate::handlers::static_file::serve_static;
+use crate::handlers::files::files;
 mod log;
 mod response;
 use log::Logger;
@@ -40,8 +41,10 @@ fn main() {
             Logger::get(path);
 			if path.starts_with("/qserve-static-files") {
             	serve_static(&stream, request.clone());
-            } else {
+            } else if path == "/" {
             	home(&stream, request.clone());
+            } else {
+          		files(&stream, request.clone());
             }
         });
     }
