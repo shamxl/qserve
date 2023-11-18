@@ -11,7 +11,7 @@ use log::Logger;
 use response::Response;
 use std::net::{SocketAddr, TcpListener};
 
-use std::io::Write;
+use std::io::{BufRead, BufReader, Write};
 
 fn main() {
     // todo: implement a command line interface using `clap`
@@ -25,8 +25,22 @@ fn main() {
     Logger::info(format!("listening on port: {}", &port));
 
     for stream in listener.incoming() {
-		std::thread::spawn (|| {
-			home(stream.unwrap())
+        std::thread::spawn(|| {
+            let mut stream = stream.unwrap();
+            let buffer = BufReader::new(&mut stream);
+            let request = match buffer.lines().next() {
+                Some(Ok(request)) => request,
+                Some(Err(_)) => {
+                    Logger::error("Invalid request");
+                    return;
+                }
+                None => {
+                    Logger::warn("Empty request");
+                    return;
+                }
+            };
+
+            home(stream, request)
         });
     }
 }
