@@ -46,7 +46,7 @@ impl Logger {
 
 	pub fn get<T: AsRef<str>> (msg: T) {
 		let message = format! (
-            "{0}GET{1} - {0}{2}{1}",
+            "{0}[{1} GET {0}]{1} - {0}{2}{1}",
             color((70, 200, 30)),
             POSTFIX,
             msg.as_ref()
