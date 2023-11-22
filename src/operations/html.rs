@@ -1,7 +1,7 @@
-const TEMPLATE: &str = include_str! ("../../public/index.html");
+const TEMPLATE: &str = include_str!("../../public/index.html");
 
-fn generate (content: &str, path: &str) -> String {
-	let html = TEMPLATE.replace("{content}", content).replace("{path}", path);
-
-	html
+fn generate(content: &str, path: &str) -> String {
+    TEMPLATE
+        .replace("{content}", content)
+        .replace("{path}", path)
 }

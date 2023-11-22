@@ -1,8 +1,7 @@
-mod operations;
 mod handlers;
-use crate::handlers::home::home;
-use crate::handlers::static_file::serve_static;
+mod operations;
 use crate::handlers::files::files;
+use crate::handlers::home::home;
 mod log;
 mod response;
 use log::Logger;
@@ -39,12 +38,11 @@ fn main() {
 
             let path = request.split_whitespace().nth(1).unwrap();
             Logger::get(path);
-			if path.starts_with("/qserve-static-files") {
-            	serve_static(&stream, request.clone());
-            } else if path == "/" {
-            	home(&stream, request.clone());
+
+            if path == "/" {
+                home(&stream, request.clone());
             } else {
-          		files(&stream, request.clone());
+                files(&stream, request.clone());
             }
         });
     }
