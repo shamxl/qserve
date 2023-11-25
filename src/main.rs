@@ -1,24 +1,26 @@
 mod handlers;
 mod operations;
-use crate::handlers::files::files;
-use crate::handlers::home::home;
+mod arguments;
 mod log;
 mod response;
-use log::Logger;
-use std::net::TcpListener;
 
-use std::io::{BufRead, BufReader};
+use log::Logger;
+use std::{
+	net::TcpListener,
+	io::{ BufRead, BufReader }
+};
+use handlers::{
+	files::files,
+	home::home
+};
+
 
 fn main() {
-    // todo: implement a command line interface using `clap`
-    // and access ip address and port from it
-    let ip = "0.0.0.0";
-    let port = "3000";
-    //
-
+    let ip = arguments::get_ip();
+    let port = arguments::get_port();
     let address = format!("{}:{}", ip, port);
     let listener = TcpListener::bind(&address).unwrap();
-    Logger::info(format!("listening on port: {}", &port));
+    Logger::info(format!("listening on: {}", &address));
 
     for stream in listener.incoming() {
         std::thread::spawn(|| {

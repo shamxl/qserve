@@ -1,7 +1,9 @@
 use std::net::TcpStream;
 use std::io::Write;
+use std::fs;
 use crate::response::Response;
 use crate::operations::{file,html};
+use crate::log::Logger;
 
 pub fn home(mut stream: &TcpStream, _request: String) {
 	let mut contents = Vec::new();
@@ -9,8 +11,22 @@ pub fn home(mut stream: &TcpStream, _request: String) {
 	match file::read_dir(".") {
 		Ok(dir) => {
 			for i in dir {
+				let mut file_type = String::from("file");
+				match fs::metadata(i.path()) {
+					Ok(f_type) => {
+						if f_type.is_dir() {
+							file_type = "dir".to_string()
+						}
+					}
+
+					Err(_) => {
+						Logger::warn("unknown error");
+						return
+					}
+				}
 				contents.push(format!(
-					"<a href=\"{0}\">{1}</a>",
+					"<a class=\"{0}\" href=\"{1}\">{2}</a>",
+					file_type,
 					i.path().display(),
 					i.file_name().to_str().unwrap()
 				))
