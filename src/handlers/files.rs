@@ -12,7 +12,7 @@ pub fn files(mut stream: &TcpStream, request: String) {
         .nth(1)
         .unwrap()
         .replacen('/', "./", 1);
-    let metadata = match fs::metadata(&path) {
+        let metadata = match fs::metadata(&path) {
         Ok(metadata) => metadata,
         Err(e) => {
             let _ = stream.write_all(
@@ -47,7 +47,7 @@ pub fn files(mut stream: &TcpStream, request: String) {
     			contents.push("<a href=\"../\">..</a>".to_string());
     			for i in dir_contents {
     				contents.push(format!(
-    					"<a href=\"{0}\">{1}</a>",
+    					"<a href=\"/{0}\">{1}</a>",
     					i.path().display(),
     					i.file_name().to_str().unwrap()
     				));
