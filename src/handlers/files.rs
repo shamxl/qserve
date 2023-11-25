@@ -1,5 +1,6 @@
 use crate::log::Logger;
 use crate::operations::file;
+use crate::operations::html;
 use crate::response::Response;
 use std::fs;
 use std::path::Path;
@@ -31,7 +32,7 @@ pub fn files(mut stream: &TcpStream, request: String) {
             Err(e) => {
                 let _ = stream.write_all(
                     Response::bad_request(
-                        "error while reading file, check terminal for logs",
+                        "error reading file, check terminal for logs",
                         "text/plain",
                     )
                     .as_bytes(),
@@ -39,5 +40,27 @@ pub fn files(mut stream: &TcpStream, request: String) {
                 Logger::error(format!("{}", e));
             }
         };
+    } else {
+    	match file::read_dir(&path) {
+    		Ok(dir_contents) => {
+    			let mut contents = Vec::new();
+    			contents.push("<a href=\"../\">..</a>".to_string());
+    			for i in dir_contents {
+    				contents.push(format!(
+    					"<a href=\"{0}\">{1}</a>",
+    					i.path().display(),
+    					i.file_name().to_str().unwrap()
+    				));
+
+    				Logger::info(format! ("{:#?}", i.path()));
+    			}
+
+    			let _ = stream.write_all(Response::ok(&html::generate(&contents.join("\n"), &path), "text/html").as_bytes());
+    		}
+    		Err(e) => {
+    			let _ = stream.write_all(Response::bad_request("error reading dir, check terminal for logs", "text/plain").as_bytes());
+    			Logger::error(format!("{}", e));
+    		}
+    	};
     }
 }
