@@ -10,31 +10,46 @@
 			.files {
 				display: flex;
 				flex-direction: column;
-				gap: 10px;
+				gap: 20px;
 			}
 
 			.files > * {
 				background-color: transparent;
 				color: black;
 				height: 20px;
-				padding: 10px 10px;
-				border-radius: 5px;
-				box-shadow: 0 0 0 0.5px #c4c4c4;
+				padding: 5px 10px;
 				text-decoration: none;
-				width: fit-content;
-				padding: 10px 30px;
 			}
 
-			h1 {
-				margin-bottom: 50px;
+			p {
+				margin: 30px;
 			}
+
+			.dir::before {
+				content: url(https://icons.getbootstrap.com/assets/icons/folder.svg);
+				padding: 0 5px;
+				gap: 5px;
+			}
+
+			.file::before {
+				content: url(https://icons.getbootstrap.com/assets/icons/file-earmark.svg);
+				padding: 0 5px;
+				gap: 5px;
+			}
+
+			.back::before {
+				content: url(https://icons.getbootstrap.com/assets/icons/arrow-90deg-left.svg);
+				padding: 0 5px;
+				gap: 5px;
+			}
+
 		</style>
 	</head>
 	<body>
 		<nav>
 			<a>qserve</a>
 		</nav>
-		<h1>Index of {path}</h1>
+		<p>Index of {path}</p>
 		<div class="files">
 			{content}
 		</div>
