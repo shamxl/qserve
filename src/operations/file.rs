@@ -11,12 +11,12 @@ pub fn read_file(path: &str) -> std::io::Result<Vec<u8>> {
     Ok(contents)
 }
 
-pub fn read_dir (path: &str) -> std::io::Result<Vec<DirEntry>> {
-	let dir = fs::read_dir(path)?;
-	let mut contents = Vec::new();
-	for e in dir {
-		contents.push(e.unwrap())
-	}
+pub fn read_dir(path: &str) -> std::io::Result<Vec<DirEntry>> {
+    let dir = fs::read_dir(path)?;
+    let mut contents = Vec::new();
+    for e in dir {
+        contents.push(e.unwrap())
+    }
 
-	Ok(contents)
+    Ok(contents)
 }

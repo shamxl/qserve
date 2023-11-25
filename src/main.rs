@@ -1,19 +1,15 @@
-mod handlers;
-mod operations;
 mod arguments;
+mod handlers;
 mod log;
+mod operations;
 mod response;
 
+use handlers::{files::files, home::home};
 use log::Logger;
 use std::{
-	net::TcpListener,
-	io::{ BufRead, BufReader }
+    io::{BufRead, BufReader},
+    net::TcpListener,
 };
-use handlers::{
-	files::files,
-	home::home
-};
-
 
 fn main() {
     let ip = arguments::get_ip();
