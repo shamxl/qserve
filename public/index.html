@@ -3,12 +3,34 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<style>
+			* {
+				font-family: system-ui;
+			}
+			
+			.files {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.files > * {
+				background-color: #f5f5f5;
+				color: black;
+				height: 20px;
+				padding: 10px 10px;
+				border-radius: 5px;
+				box-shadow: 0 0 0 0.5px #c4c4c4;
+				text-decoration: none;
+			}
 		</style>
 	</head>
 	<body>
 		<nav>
 			<a>qserve</a>
 		</nav>
-		
+		<h1>Index of {path}</h1>
+		<div class="files">
+			{content}
+		</div>
 	</body>
 </html>
