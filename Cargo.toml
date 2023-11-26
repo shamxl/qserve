@@ -5,7 +5,7 @@ repository = "https://github.com/shamxl/qserve"
 version = "0.1.0"
 edition = "2021"
 authors = ["shamxl <shamxl@pm.me>"]
-keywords = ["serve", "serve files", "qserve", "file sharing", "file serving"]
+keywords = ["serve", "serve-files", "qserve", "file-sharing", "file-serving"]
 license = "MIT"
 include = ["**/*"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
