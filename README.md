@@ -6,6 +6,7 @@ A super fast, lightweight file-serving program written in rust
 cargo install qserve
 ```
 
+**note**: *Qserve is in its early stage. If you encounter any errors, please create an issue.*
 
 # installation
 
