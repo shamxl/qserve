@@ -25,3 +25,16 @@ pub fn get_port() -> String {
 
     port.to_string()
 }
+
+pub fn get_chunk_size() -> usize {
+    let args: Vec<String> = env::args().collect();
+    let mut chunks: usize = 4096;
+
+    for (index, arg) in args.iter().enumerate() {
+        if arg == "--chunks" || arg == "--chunk" || arg == "-c" {
+            chunks = args[index + 1].clone().parse::<usize>().unwrap();
+        }
+    }
+
+    chunks
+}

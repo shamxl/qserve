@@ -1,10 +1,14 @@
+use crate::arguments::get_chunk_size;
 use crate::log::Logger;
 use crate::operations::file;
 use crate::operations::html;
 use crate::response::Response;
 use std::fs;
 use std::path::Path;
-use std::{io::Write, net::TcpStream};
+use std::{
+    io::{Read, Write},
+    net::TcpStream,
+};
 
 pub fn files(mut stream: &TcpStream, request: String) {
     let path = request
@@ -24,22 +28,34 @@ pub fn files(mut stream: &TcpStream, request: String) {
     };
 
     if metadata.is_file() {
-        match file::read_file(&path) {
-            Ok(file_content) => {
+        match fs::File::open(&path) {
+            Ok(mut file_buffer) => {
+                let mut buffer = vec![0; get_chunk_size()];
                 let file_name = Path::new(&path).file_name().unwrap().to_str().unwrap();
-                let _ = stream.write_all(Response::send_file(file_content, file_name).as_bytes());
+                let _ = stream.write_all(Response::send_file(metadata.len(), file_name).as_bytes());
+
+                loop {
+                    match file_buffer.read(&mut buffer) {
+                        Ok(bytes) => {
+                            if bytes == 0 {
+                                break;
+                            }
+
+                            let _ = stream.write_all(&buffer[..bytes]);
+                        }
+                        Err(e) => Logger::error(format!("file reading failed, {}", e)),
+                    }
+                }
             }
+
             Err(e) => {
                 let _ = stream.write_all(
-                    Response::bad_request(
-                        "error reading file, check terminal for logs",
-                        "text/plain",
-                    )
-                    .as_bytes(),
+                    Response::bad_request("error: check terminal for logs", "text/plain")
+                        .as_bytes(),
                 );
-                Logger::error(format!("{}", e));
+                Logger::error(format!("{}", e))
             }
-        };
+        }
     } else {
         match file::read_dir(&path) {
             Ok(dir_contents) => {
