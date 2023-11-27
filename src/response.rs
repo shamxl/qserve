@@ -23,13 +23,12 @@ impl Response {
         header
     }
 
-    pub fn send_file(content: Vec<u8>, filename: &str) -> String {
-        let content = String::from_utf8_lossy(&content);
+    pub fn send_file(content_length: u64, filename: &str) -> String {
+        println!("{}", filename);
         let header = format! (
-    		"HTTP/1.1 200 OK\r\nContent-Disposition: attachment; filename=\"{0}\"\r\nContent-Length: {1}\r\n\r\n{2}",
+    		"HTTP/1.1 200 OK\r\nContent-Disposition: attachment; filename=\"{0}\"\r\nContent-Length: {1}\r\n\r\n",
     		filename,
-    		content.len(),
-    		content
+    		content_length
     	);
 
         header
