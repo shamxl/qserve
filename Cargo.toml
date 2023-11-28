@@ -2,7 +2,7 @@
 name = "qserve"
 description = "Quickly serve your files on your network with speed and simplicity."
 repository = "https://github.com/shamxl/qserve"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 authors = ["shamxl <shamxl@pm.me>"]
 keywords = ["serve", "serve-files", "qserve", "file-sharing", "file-serving"]
