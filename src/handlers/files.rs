@@ -60,7 +60,14 @@ pub fn files(mut stream: &TcpStream, request: String) {
         match file::read_dir(&path) {
             Ok(dir_contents) => {
                 let mut contents = Vec::new();
-                contents.push("<a class=\"back\" href=\"../\">..</a>".to_string());
+                let parent_directory = Path::new(request.split_whitespace().nth(1).unwrap())
+                    .parent()
+                    .unwrap()
+                    .display();
+                contents.push(format!(
+                    "<a class=\"back\" href=\"{}\"></a>",
+                    parent_directory
+                ));
                 for i in dir_contents {
                     let mut file_type = String::from("file");
                     match fs::metadata(i.path()) {
