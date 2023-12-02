@@ -1,8 +1,10 @@
 use crate::arguments::get_chunk_size;
 use crate::log::Logger;
+use crate::operations::decoder;
 use crate::operations::file;
 use crate::operations::html;
 use crate::response::Response;
+
 use std::fs;
 use std::path::Path;
 use std::{
@@ -11,11 +13,14 @@ use std::{
 };
 
 pub fn files(mut stream: &TcpStream, request: String) {
-    let path = request
-        .split_whitespace()
-        .nth(1)
-        .unwrap()
-        .replacen('/', "./", 1);
+    let path = decoder::decode(
+        request
+            .split_whitespace()
+            .nth(1)
+            .unwrap()
+            .replacen('/', "./", 1),
+    );
+
     let metadata = match fs::metadata(&path) {
         Ok(metadata) => metadata,
         Err(e) => {
