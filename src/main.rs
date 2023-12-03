@@ -12,7 +12,7 @@ use std::{
 };
 
 fn main() {
-	let config = config::Config::parse();
+    let config = config::Config::parse();
     let address = format!("{}:{}", config.ip, config.port);
     let listener = TcpListener::bind(&address).unwrap();
     Logger::info(format!("listening on: {}", &address));
