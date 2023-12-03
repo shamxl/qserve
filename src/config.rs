@@ -6,20 +6,20 @@ pub struct Config {
     pub ip: String,
     pub port: String,
     pub chunks: usize,
-    pub path: String
+    pub path: String,
 }
 
 impl Config {
-    pub fn parse () -> Self {
+    pub fn parse() -> Self {
         Config {
             ip: Self::get_ip(),
             port: Self::get_port(),
             chunks: Self::get_chunk_size(),
-            path: Self::get_path()
+            path: Self::get_path(),
         }
     }
 
-    fn get_ip () -> String {
+    fn get_ip() -> String {
         let args: Vec<String> = env::args().collect();
         let mut ip = String::from("0.0.0.0");
 
@@ -32,7 +32,7 @@ impl Config {
         ip.to_string()
     }
 
-    fn get_port () -> String {
+    fn get_port() -> String {
         let args: Vec<String> = env::args().collect();
         let mut port = String::from("3000");
 
@@ -45,7 +45,7 @@ impl Config {
         port.to_string()
     }
 
-    fn get_chunk_size () -> usize {
+    fn get_chunk_size() -> usize {
         let args: Vec<String> = env::args().collect();
         let mut chunks: usize = 4096;
 
@@ -58,7 +58,7 @@ impl Config {
         chunks
     }
 
-    fn get_path () -> String {
+    fn get_path() -> String {
         let args: Vec<String> = env::args().collect();
         let mut path = String::from(".");
 
