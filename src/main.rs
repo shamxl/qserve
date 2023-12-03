@@ -1,4 +1,4 @@
-mod arguments;
+mod config;
 mod handlers;
 mod log;
 mod operations;
@@ -12,9 +12,8 @@ use std::{
 };
 
 fn main() {
-    let ip = arguments::get_ip();
-    let port = arguments::get_port();
-    let address = format!("{}:{}", ip, port);
+	let config = config::Config::parse();
+    let address = format!("{}:{}", config.ip, config.port);
     let listener = TcpListener::bind(&address).unwrap();
     Logger::info(format!("listening on: {}", &address));
 
