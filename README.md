@@ -2,7 +2,7 @@
 
 A super fast, lightweight file-serving program written in rust
 
-```
+```bash
 cargo install qserve
 ```
 
@@ -11,35 +11,22 @@ cargo install qserve
 # installation
 
 ### cargo
-```
+```bash
 cargo install qserve 
 ```
 
 ### from source
 
-```
+```bash
 git clone https://github.com/shamxl/qserve
 cd qserve
 cargo build --release
 ```
 
-# Usage
+# Basic usage
 
-**note**: qserve currently don't support setting default path; future updates will include that
-
-```
-qserve
-```
-
-### setting ip & port
-```
-qserve --ip <ip address> --port <port>
-```
-
-### setting chunk size
-
-```
-qserve --chunks <number of chunks>
+```bash
+qserve --path <path>
 ```
 
 # FAQs 
