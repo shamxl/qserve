@@ -39,6 +39,33 @@ impl Config {
     	}
     }
 
+    pub fn print_help_and_exit () {
+		let args: Vec<String> = env::args().collect();
+        let mut print = false;
+
+        for arg in args.iter() {
+            if arg == "--help" || arg == "-h" {
+                print = true;
+            }
+        }
+
+        let version = env! ("CARGO_PKG_VERSION");
+
+        if print {
+
+            let message = format!("Qserve - {0}\n
+            --ip      or -i – to set the ip address	[default: 0.0.0.0]
+            --port    or -p – to set the port	[default: 3000]
+            --path    or -P – to set the path to serve	[default: . (current dir)]
+            --version or -v – print version and exit
+            --help    or -h – print this message and exit 
+            ", version);
+            println! ("{}", message);
+            exit(0);
+        }
+   	 
+    }
+
     fn get_ip() -> String {
         let args: Vec<String> = env::args().collect();
         let mut ip = String::from("0.0.0.0");
