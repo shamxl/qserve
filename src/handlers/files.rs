@@ -1,5 +1,8 @@
+// :D
+
 use {
     crate::{
+        config::get_full_path,
         log::Logger,
         operations::{decoder, file},
         response::Response,
@@ -9,14 +12,8 @@ use {
 };
 
 pub fn files(mut tcpstream: &TcpStream, request: String) {
-    let path = decoder::decode(
-        request
-            .split_whitespace()
-            .nth(1)
-            .unwrap()
-            .replacen('/', "./", 1),
-    );
-
+    let req_path = decoder::decode(request.split_whitespace().nth(1).unwrap().to_string());
+    let path = get_full_path(req_path);
     let metadata = match fs::metadata(&path) {
         Ok(metadata) => metadata,
         Err(e) => {
@@ -31,6 +28,6 @@ pub fn files(mut tcpstream: &TcpStream, request: String) {
     if metadata.is_file() {
         stream(tcpstream, metadata.len(), path);
     } else {
-        serve_dir(tcpstream, request, path)
+        serve_dir(tcpstream, request, path, true)
     }
 }
