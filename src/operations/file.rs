@@ -1,5 +1,10 @@
 use {
-    crate::{config::Config, log::Logger, operations::html, response::Response},
+    crate::{
+        config::{get_short_path, Config},
+        log::Logger,
+        operations::html,
+        response::Response,
+    },
     std::{
         fs,
         fs::DirEntry,
@@ -21,7 +26,6 @@ pub fn read_dir(path: &str) -> std::io::Result<Vec<DirEntry>> {
 
 pub fn stream(mut stream: &TcpStream, content_len: u64, path: String) {
     let config = Config::parse();
-
     match fs::File::open(&path) {
         Ok(mut file_buffer) => {
             let mut buffer = vec![0; config.chunks];
@@ -51,18 +55,21 @@ pub fn stream(mut stream: &TcpStream, content_len: u64, path: String) {
     }
 }
 
-pub fn serve_dir(mut stream: &TcpStream, request: String, path: String) {
+pub fn serve_dir(mut stream: &TcpStream, request: String, path: String, back_btn: bool) {
     match read_dir(&path) {
         Ok(dir_contents) => {
             let mut contents = Vec::new();
-            let parent_directory = Path::new(request.split_whitespace().nth(1).unwrap())
-                .parent()
-                .unwrap()
-                .display();
-            contents.push(format!(
-                "<a class=\"back\" href=\"{}\"></a>",
-                parent_directory
-            ));
+            if back_btn {
+                let parent_directory = Path::new(request.split_whitespace().nth(1).unwrap())
+                    .parent()
+                    .unwrap()
+                    .display();
+                contents.push(format!(
+                    "<a class=\"back\" href=\"{}\"></a>",
+                    parent_directory
+                ));
+            }
+
             for i in dir_contents {
                 let mut file_type = String::from("file");
                 match fs::metadata(i.path()) {
@@ -75,9 +82,9 @@ pub fn serve_dir(mut stream: &TcpStream, request: String, path: String) {
                 }
 
                 contents.push(format!(
-                    "<a class=\"{0}\" href=\"/{1}\">{2}</a>",
+                    "<a class=\"{0}\" href=\"{1}\">{2}</a>",
                     file_type,
-                    i.path().display(),
+                    get_short_path(i.path().display().to_string()),
                     i.file_name().to_str().unwrap()
                 ));
             }

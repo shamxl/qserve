@@ -1,44 +1,32 @@
-use crate::log::Logger;
-use crate::operations::{file, html};
-use crate::response::Response;
-use std::fs;
-use std::io::Write;
-use std::net::TcpStream;
+use {
+    crate::{
+        config::get_full_path,
+        log::Logger,
+        operations::file::{serve_dir, stream},
+        response::Response,
+    },
+    std::{fs, io::Write, net::TcpStream},
+};
 
-pub fn home(mut stream: &TcpStream, _request: String) {
-    let mut contents = Vec::new();
-
-    match file::read_dir(".") {
-        Ok(dir) => {
-            for i in dir {
-                let mut file_type = String::from("file");
-                match fs::metadata(i.path()) {
-                    Ok(f_type) => {
-                        if f_type.is_dir() {
-                            file_type = "dir".to_string()
-                        }
-                    }
-
-                    Err(_) => {
-                        Logger::warn("unknown error");
-                        return;
-                    }
-                }
-                contents.push(format!(
-                    "<a class=\"{0}\" href=\"{1}\">{2}</a>",
-                    file_type,
-                    i.path().display(),
-                    i.file_name().to_str().unwrap()
-                ))
+pub fn home(mut tcpstream: &TcpStream, request: String) {
+    let path = get_full_path(".".to_string());
+    match fs::metadata(&path) {
+        Ok(metadata) => {
+            if metadata.is_dir() {
+                serve_dir(tcpstream, request.clone(), path, false)
+            } else {
+                stream(tcpstream, metadata.len(), path)
             }
-
-            let html_content = html::generate(&contents.join("\n"), "/");
-            let _ = stream.write_all(Response::ok(&html_content, "text/html").as_bytes());
         }
-        Err(_) => {
-            let _ = stream.write_all(
-                Response::bad_request("error reading dir, check terminal for logs", "text/html")
-                    .as_bytes(),
+
+        Err(e) => {
+            Logger::error(format!("{}", e));
+            let _ = tcpstream.write_all(
+                Response::bad_request(
+                    "error: failed to check metadata of file, check terminal for info",
+                    "text/plain",
+                )
+                .as_bytes(),
             );
         }
     }
