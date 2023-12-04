@@ -4,6 +4,7 @@ mod log;
 mod operations;
 mod response;
 
+use config::Config;
 use handlers::{files::files, home::home};
 use log::Logger;
 use std::{
@@ -12,7 +13,8 @@ use std::{
 };
 
 fn main() {
-    let config = config::Config::parse();
+	Config::print_version_and_exit();
+    let config = Config::parse();
     let address = format!("{}:{}", config.ip, config.port);
     let listener = TcpListener::bind(&address).unwrap();
     Logger::info(format!("listening on: {}", &address));
