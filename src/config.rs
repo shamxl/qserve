@@ -55,8 +55,9 @@ impl Config {
 
             let message = format!("Qserve - {0}\n
             --ip      or -i – to set the ip address	[default: 0.0.0.0]
-            --port    or -p – to set the port	[default: 3000]
+            --port    or -p – to set the port		[default: 3000]
             --path    or -P – to set the path to serve	[default: . (current dir)]
+            --chunks  or -c – to set chunk size 	[default: 4096]
             --version or -v – print version and exit
             --help    or -h – print this message and exit 
             ", version);
