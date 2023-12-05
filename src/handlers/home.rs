@@ -1,6 +1,6 @@
 use {
     crate::{
-        config::get_full_path,
+        config::{get_full_path, Config},
         log::Logger,
         operations::file::{serve_dir, stream},
         response::Response,
@@ -9,13 +9,14 @@ use {
 };
 
 pub fn home(mut tcpstream: &TcpStream, request: String) {
-    let path = get_full_path(".".to_string());
+	let path = Config::parse().path;
     match fs::metadata(&path) {
         Ok(metadata) => {
-            if metadata.is_dir() {
-                serve_dir(tcpstream, request.clone(), path, false)
-            } else {
+            if metadata.is_file() {
                 stream(tcpstream, metadata.len(), path)
+            } else {
+            	let dir_path = get_full_path(".".to_string());				
+                serve_dir(tcpstream, request.clone(), dir_path, false);
             }
         }
 
