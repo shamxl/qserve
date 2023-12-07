@@ -1,7 +1,4 @@
-use std::env;
-use std::fs;
-use std::path::{Path, PathBuf};
-use std::process::exit;
+use std::{env, fs};
 
 #[derive(Debug)]
 pub struct Config {
@@ -11,139 +8,46 @@ pub struct Config {
     pub path: String,
 }
 
-impl Config {
-    pub fn parse() -> Self {
+impl Default for Config {
+    fn default() -> Self {
         Config {
-            ip: Self::get_ip(),
-            port: Self::get_port(),
-            chunks: Self::get_chunk_size(),
-            path: Self::get_path(),
+            ip: "0.0.0.0".to_string(),
+            port: "3000".to_string(),
+            chunks: 4096,
+            path: ".".to_string(),
         }
-    }
-
-    pub fn print_version_and_exit () {
-    	let args: Vec<String> = env::args().collect();
-    	let mut print = false;
-    	
-    	for arg in args.iter() {
-    		if arg == "--version" || arg == "-v" {
-    	    	print = true;
-    	    }
-    	}
-
-    	if print {
-    	
-    		let version = env! ("CARGO_PKG_VERSION");
-    		println! ("v{}", version);
-    		exit(0);
-    	}
-    }
-
-    pub fn print_help_and_exit () {
-		let args: Vec<String> = env::args().collect();
-        let mut print = false;
-
-        for arg in args.iter() {
-            if arg == "--help" || arg == "-h" {
-                print = true;
-            }
-        }
-
-        let version = env! ("CARGO_PKG_VERSION");
-
-        if print {
-
-            let message = format!("Qserve - {0}\n
-            --ip      or -i – to set the ip address	[default: 0.0.0.0]
-            --port    or -p – to set the port		[default: 3000]
-            --path    or -P – to set the path to serve	[default: . (current dir)]
-            --chunks  or -c – to set chunk size 	[default: 4096]
-            --version or -v – print version and exit
-            --help    or -h – print this message and exit 
-            ", version);
-            println! ("{}", message);
-            exit(0);
-        }
-   	 
-    }
-
-    fn get_ip() -> String {
-        let args: Vec<String> = env::args().collect();
-        let mut ip = String::from("0.0.0.0");
-
-        for (index, arg) in args.iter().enumerate() {
-            if arg == "--ip" || arg == "-i" {
-                ip = args[index + 1].clone();
-            }
-        }
-
-        ip.to_string()
-    }
-
-    fn get_port() -> String {
-        let args: Vec<String> = env::args().collect();
-        let mut port = String::from("3000");
-
-        for (index, arg) in args.iter().enumerate() {
-            if arg == "--port" || arg == "-p" {
-                port = args[index + 1].clone();
-            }
-        }
-
-        port.to_string()
-    }
-
-    fn get_chunk_size() -> usize {
-        let args: Vec<String> = env::args().collect();
-        let mut chunks: usize = 4096;
-
-        for (index, arg) in args.iter().enumerate() {
-            if arg == "--chunks" || arg == "--chunk" || arg == "-c" {
-                chunks = args[index + 1].clone().parse::<usize>().unwrap();
-            }
-        }
-
-        chunks
-    }
-
-    fn get_path() -> String {
-        let args: Vec<String> = env::args().collect();
-        let mut path = String::from(".");
-
-        for (index, arg) in args.iter().enumerate() {
-            if arg == "--path" || arg == "-P" {
-                path = args[index + 1].clone();
-            }
-        }
-
-        fs::canonicalize(path).unwrap().display().to_string()
     }
 }
 
-pub fn get_short_path(mut req_path: String) -> String {
-    let config = Config::parse();
+impl Config {
+    fn parse_args(args: &[String], long_arg: &str, short_arg: &str, default: String) -> String {
+        let mut value = String::from(default);
 
-    if !req_path.starts_with('/') {
-        let formatted_path = format!("/{}", req_path);
-        req_path = formatted_path
+        for (index, arg) in args.iter().enumerate() {
+            match arg.as_str() {
+                arg if arg == short_arg || arg == long_arg => {
+                    value = args.get(index + 1).cloned().unwrap_or_default();
+                }
+
+                _ => {}
+            }
+        }
+
+        value
     }
-    let mut absolute_path = Path::new(&req_path)
-        .to_str()
-        .unwrap()
-        .replacen(&config.path, "", 1);
 
-    if absolute_path == "/." {
-        absolute_path = "./".to_string()
+    pub fn parse() -> Self {
+        let config = Config::default();
+        let args: Vec<String> = env::args().collect();
+        let path = Self::parse_args(&args, "--path", "-P", config.path);
+        let config_path = fs::canonicalize(&path);
+
+        Config {
+            ip: Self::parse_args(&args, "--ip", "-i", config.ip),
+            port: Self::parse_args(&args, "--port", "-p", config.port),
+            chunks: Self::parse_args(&args, "--chunks", "-c", config.chunks.to_string()).parse().unwrap(),
+            path: config_path.unwrap().display().to_string(),
+        }
     }
-
-    absolute_path
 }
 
-pub fn get_full_path(short_path: String) -> String {
-    let config = Config::parse();
-    let short_path = short_path.replacen('/', "", 1);
-    PathBuf::from(config.path)
-        .join(short_path)
-        .display()
-        .to_string()
-}
