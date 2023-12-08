@@ -13,8 +13,6 @@ use std::{
 };
 
 fn main() {
-	Config::print_version_and_exit();
-	Config::print_help_and_exit();
     let config = Config::parse();
     let address = format!("{}:{}", config.ip, config.port);
     let listener = TcpListener::bind(&address).unwrap();
