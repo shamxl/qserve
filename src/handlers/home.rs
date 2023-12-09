@@ -1,34 +1,17 @@
 use {
     crate::{
-        config::{get_full_path, Config},
-        log::Logger,
-        operations::file::{serve_dir, stream},
-        response::Response,
+        config::Config,
+        operations::file::{serve_dir, serve_file},
     },
-    std::{fs, io::Write, net::TcpStream},
+    std::net::TcpStream,
 };
 
-pub fn home(mut tcpstream: &TcpStream, request: String) {
-	let path = Config::parse().path;
-    match fs::metadata(&path) {
-        Ok(metadata) => {
-            if metadata.is_file() {
-                stream(tcpstream, metadata.len(), path)
-            } else {
-            	let dir_path = get_full_path(".".to_string());				
-                serve_dir(tcpstream, request.clone(), dir_path, false);
-            }
-        }
+pub fn home(tcpstream: &TcpStream, request: String) {
+    let config = Config::parse();
 
-        Err(e) => {
-            Logger::error(format!("{}", e));
-            let _ = tcpstream.write_all(
-                Response::bad_request(
-                    "error: failed to check metadata of file, check terminal for info",
-                    "text/plain",
-                )
-                .as_bytes(),
-            );
-        }
+    if config.preview != "None" {
+        serve_file(tcpstream, config.preview)
+    } else {
+        serve_dir(tcpstream, request, config.path, false)
     }
 }
