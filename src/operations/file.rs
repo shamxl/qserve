@@ -24,6 +24,12 @@ pub fn read_dir(path: &str) -> std::io::Result<Vec<DirEntry>> {
     Ok(contents)
 }
 
+pub fn serve_file(mut stream: &TcpStream, path: String) {
+    let file_contents = fs::read_to_string(path).unwrap();
+
+    let _ = stream.write_all(Response::ok(&file_contents, "text/html").as_bytes());
+}
+
 pub fn stream(mut stream: &TcpStream, content_len: u64, path: String) {
     let config = Config::parse();
     match fs::File::open(&path) {
