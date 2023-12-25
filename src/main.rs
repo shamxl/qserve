@@ -16,7 +16,8 @@ fn main() {
     let config = Config::parse();
     let address = format!("{}:{}", config.ip, config.port);
     let listener = TcpListener::bind(&address).unwrap();
-    Logger::info(format!("listening on: {}", &address));
+
+    log::print_url(&config.ip, &config.port);
 
     for stream in listener.incoming() {
         std::thread::spawn(|| {
